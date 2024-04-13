@@ -12,5 +12,6 @@ Students are expected to:
 Student Info
 =======================
 
-* Name: MyName
+* Name: Ta Quang Minh
+* ID: M23.ICT.009
 
