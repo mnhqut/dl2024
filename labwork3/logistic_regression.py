@@ -1,7 +1,8 @@
 import numpy as np
+from scipy.special import expit
 from gradient_descent import gradient_descent
 
-class LinearRegression:
+class LogisticRegression:
     def __init__(self, learning_rate=0.06, max_iterations=1000, tolerance=1e-6):
         self.learning_rate = learning_rate
         self.max_iterations = max_iterations
@@ -11,12 +12,11 @@ class LinearRegression:
         self.y = None
 
     def loss_function(self,w):
-        # Compute predictions
-        predictions = self.X @ w.T
-
-        # Compute error vector
-        error = predictions - self.y
-        return np.sum(error**2)/len(self.y)
+        p = expit(self.X @ w.T)
+        p = np.clip(p, 1e-15, 1 - 1e-15)
+        ones = np.ones(len(self.y))
+        loss_vector = -np.log(p)*self.y - np.log(ones - p)* (ones-self.y)
+        return np.sum(loss_vector)
 
     def fit(self, X, y):
         self.y = y
@@ -35,4 +35,6 @@ class LinearRegression:
         # Add bias term (intercept) to X
         X = np.column_stack((np.ones(len(X)), X))
         # Predict
-        return X @ self.weights.T
+        score = X @ self.weights.T
+        pred = np.where(score < 0.5, 0, 1)
+        return pred
